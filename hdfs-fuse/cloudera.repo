@@ -1,0 +1,17 @@
+#VERSION_NUMBER=7.0.3.0-79
+[CDH-7.0.3.0]
+name=CDH Version - CDH-7.0.3.0
+baseurl=https://archive.cloudera.com/cdh7/7.0.3.0/redhat7/yum/
+gpgcheck=1
+gpgkey=https://archive.cloudera.com/cdh7/7.0.3.0/redhat7/yum/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+enabled=1
+priority=1
+
+
+[HDP-UTILS-1.1.0.22]
+name=HDP-UTILS Version - HDP-UTILS-1.1.0.22
+baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDP-UTILS-1.1.0.22/repos/centos7
+gpgcheck=1
+gpgkey=http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/1635019/CDH/centos7/7.x/updates/7.0.3.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+enabled=0
+priority=1
