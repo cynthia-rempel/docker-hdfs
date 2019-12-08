@@ -1,0 +1,1 @@
+hadoop-fuse-dfs#dfs://<name_node_hostname>:<namenode_port> /home/user/dfs fuse allow_other,usetrash,rw 2 0
