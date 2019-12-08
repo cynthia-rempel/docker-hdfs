@@ -1,0 +1,1 @@
+# Container demonstrating HDFS-fuse
