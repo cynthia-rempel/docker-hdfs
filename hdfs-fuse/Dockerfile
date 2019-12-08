@@ -10,7 +10,8 @@ RUN cd /etc/pki/rpm-gpg/ && \
 
 RUN useradd user
 
-COPY fstab /etc/fstab
+# TODO: add the needed lines
+# COPY fstab /etc/fstab
 
 USER user
 
