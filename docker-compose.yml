@@ -1,0 +1,15 @@
+version: "2"
+
+services:
+  # start with one of the most-accepted hdfs mounting opetion
+  hdfs-fuse.service:
+    build:
+      context: ./hdfs-fuse
+    command: init
+    image: hdfs-fuse:rfirstaid
+  # Hadoop cluster to test against
+  hadoop.service:
+    build:
+      context: ./hadoop
+    command: /etc/bootstrap.sh -d
+    image: hadoop:rfirstaid
