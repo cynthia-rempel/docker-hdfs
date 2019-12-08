@@ -1,6 +1,4 @@
-# Creates pseudo distributed hadoop 2.7.1
-#
-# docker build -t sequenceiq/hadoop .
+# Creates pseudo distributed hadoop
 
 FROM centos/centos7.7.1908
 
