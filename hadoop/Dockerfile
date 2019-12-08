@@ -4,12 +4,16 @@
 
 FROM centos/centos7.7.1908
 
-# install dev tools
-RUN yum clean all; \
-    rpm --rebuilddb; \
-    yum install -y curl which tar sudo openssh-server openssh-clients rsync
-# update libselinux. see https://github.com/sequenceiq/hadoop-docker/issues/14
-RUN yum update -y libselinux
+RUN yum -y install \
+  curl \
+  which \
+  tar \
+  sudo \
+  openssh-server \
+  openssh-clients \
+  rsync \
+  libselinux \
+  java-1.8.0-openjdk
 
 # passwordless ssh
 RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
