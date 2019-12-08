@@ -2,6 +2,10 @@
 
 FROM docker.io/library/centos:centos7.7.1908
 
+# Put this above yum install until we know (for sure) which packages we want
+RUN curl -s http://apache.cs.utah.edu/hadoop/common/hadoop-3.1.3/hadoop-3.1.3.tar.gz | tar -xz -C /usr/local/ && \
+  mv /usr/local/hadoop-3.1.3 /usr/local/hadoop
+
 RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
   yum -y install \
     curl \
@@ -12,51 +16,35 @@ RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     openssh-clients \
     rsync \
     libselinux \
-    java-1.8.0-openjdk \
-    epel-release && \
-  rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 && \
-  yum -y install supervisor
+    java-1.8.0-openjdk
 
 # passwordless ssh
-RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
-RUN ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
-RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
+  ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
+  ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa && \
+  cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 
-# hadoop
-RUN curl -s https://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-3.1.3/hadoop-3.1.3.tar.gz | tar -xz -C /usr/local/
-RUN cd /usr/local && ln -s ./hadoop-3.1.3 hadoop
-
-ENV HADOOP_PREFIX /usr/local/hadoop
-ENV HADOOP_COMMON_HOME /usr/local/hadoop
-ENV HADOOP_HDFS_HOME /usr/local/hadoop
-ENV HADOOP_MAPRED_HOME /usr/local/hadoop
-ENV HADOOP_YARN_HOME /usr/local/hadoop
-ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
-ENV YARN_CONF_DIR $HADOOP_PREFIX/etc/hadoop
-ENV HADOOP_HOME=/usr/local/hadoop
+ENV HADOOP_PREFIX /usr/local/hadoop 
+ENV HADOOP_COMMON_HOME /usr/local/hadoop 
+ENV HADOOP_HDFS_HOME /usr/local/hadoop 
+ENV HADOOP_MAPRED_HOME /usr/local/hadoop 
+ENV HADOOP_YARN_HOME /usr/local/hadoop 
+ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop 
+ENV YARN_CONF_DIR $HADOOP_PREFIX/etc/hadoop 
+ENV HADOOP_HOME=/usr/local/hadoop 
 ENV JAVA_HOME=/usr
 
-RUN mkdir $HADOOP_PREFIX/input
-RUN cp $HADOOP_PREFIX/etc/hadoop/*.xml $HADOOP_PREFIX/input
+RUN mkdir -p /usr/local/hadoop/input && \
+  cp /usr/local/hadoop/etc/hadoop/*.xml /usr/local/hadoop/input
 
 # pseudo distributed
-COPY files/usr/local/hadoop/* /usr/local/hadoop/etc/hadoop/
-RUN sed s/HOSTNAME/localhost/ /usr/local/hadoop/etc/hadoop/core-site.xml.template > /usr/local/hadoop/etc/hadoop/core-site.xml
+COPY files/usr/local/hadoop/etc/hadoop/* /usr/local/hadoop/etc/hadoop/
+RUN sed 's/HOSTNAME/localhost/' /usr/local/hadoop/etc/hadoop/core-site.xml.template > /usr/local/hadoop/etc/hadoop/core-site.xml
 
-RUN $HADOOP_PREFIX/bin/hdfs namenode -format
+RUN /usr/local/hadoop/bin/hdfs namenode -format
 
-ADD ssh_config /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 RUN chown root:root /root/.ssh/config
-
-# # installing supervisord
-# RUN yum install -y python-setuptools
-# RUN easy_install pip
-# RUN curl https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py -o - | python
-# RUN pip install supervisor
-#
-# ADD supervisord.conf /etc/supervisord.conf
 
 ADD bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh
