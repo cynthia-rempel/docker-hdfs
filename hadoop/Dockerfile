@@ -1,6 +1,6 @@
 # Creates pseudo distributed hadoop
 
-FROM centos/centos7.7.1908
+FROM docker.io/library/centos/centos7.7.1908
 
 RUN yum -y install \
   curl \
@@ -18,11 +18,6 @@ RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
 RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
 RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
-
-
-# java
-yum -y install java-1.8.0-openjdk
-
 
 # hadoop
 RUN curl -s https://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-3.1.3/hadoop-3.1.3.tar.gz | tar -xz -C /usr/local/

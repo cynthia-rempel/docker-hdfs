@@ -1,4 +1,4 @@
-FROM centos/centos7.7.1908
+FROM docker.io/library/centos/centos7.7.1908
 
 # create our own repo file to enable (or disable) cloudera repos
 COPY coudera.repo /etc/yum.repos.d/cloudera.repo
